@@ -1,26 +1,14 @@
+import NotesTable from '@/features/notes/components/NotesTable'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import React from 'react'
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow
-} from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Trash } from 'lucide-react'
-
-type Note = {
-	id: number
-	title: string
-}
 
 const NotesPage = async () => {
 	const supabase = await createClient()
 
-	const { data: notes } = await supabase.from('notes').select()
+	const { data: notes } = await supabase
+		.from('notes')
+		.select('*')
+		.order('id', { ascending: false })
 
 	const {
 		data: { user }
@@ -31,28 +19,9 @@ const NotesPage = async () => {
 	}
 
 	return (
-		<Table className="border">
-			<TableHeader>
-				<TableRow>
-					<TableHead>ID</TableHead>
-					<TableHead>Başlık</TableHead>
-					<TableHead>İşlemler</TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{notes?.map((note: Note) => (
-					<TableRow key={note.id}>
-						<TableCell>{note.id}</TableCell>
-						<TableCell>{note.title}</TableCell>
-						<TableCell>
-							<Button variant="ghost" size={'sm'}>
-								<Trash size={16} />
-							</Button>
-						</TableCell>
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
+		<div className="container mx-auto py-10">
+			<NotesTable notes={notes} />
+		</div>
 	)
 }
 
