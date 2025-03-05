@@ -10,8 +10,9 @@ import {
 	TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Trash } from 'lucide-react'
+import { Trash, Pencil } from 'lucide-react'
 import NoteDeleteModal from './NoteDeleteModal'
+import NoteEditModal from './NoteEditModal'
 
 interface Note {
 	id: number
@@ -26,6 +27,7 @@ const NotesTable = ({ notes }: NotesTableProps) => {
 	const [selectedNoteId, setSelectedNoteId] = useState<number | null>(
 		null
 	)
+	const [editNote, setEditNote] = useState<Note | null>(null)
 
 	return (
 		<>
@@ -43,13 +45,22 @@ const NotesTable = ({ notes }: NotesTableProps) => {
 							<TableCell>{note.id}</TableCell>
 							<TableCell>{note.title}</TableCell>
 							<TableCell>
-								<Button
-									variant="ghost"
-									size="sm"
-									onClick={() => setSelectedNoteId(note.id)}
-								>
-									<Trash size={16} />
-								</Button>
+								<div className="flex gap-2">
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={() => setEditNote(note)}
+									>
+										<Pencil size={16} />
+									</Button>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={() => setSelectedNoteId(note.id)}
+									>
+										<Trash size={16} />
+									</Button>
+								</div>
 							</TableCell>
 						</TableRow>
 					))}
@@ -61,6 +72,15 @@ const NotesTable = ({ notes }: NotesTableProps) => {
 					isOpen={!!selectedNoteId}
 					onClose={() => setSelectedNoteId(null)}
 					noteId={selectedNoteId}
+				/>
+			)}
+
+			{editNote && (
+				<NoteEditModal
+					isOpen={!!editNote}
+					onClose={() => setEditNote(null)}
+					noteId={editNote.id}
+					currentTitle={editNote.title}
 				/>
 			)}
 		</>
